@@ -1,0 +1,21 @@
+{
+  "name": "ndlano/moodle_local_h5pcaretaker",
+  "description": "H5P Caretaker integration for moodle",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+      {
+          "name": "NDLA"
+      }
+  ],
+  "repositories": [
+  {
+    "type": "vcs",
+    "url": "https://github.com/ndlano/h5p-caretaker"
+  }
+  ],
+  "require": {
+      "php": ">=8",
+      "ndlano/h5p-caretaker": "dev-master"
+  }
+}

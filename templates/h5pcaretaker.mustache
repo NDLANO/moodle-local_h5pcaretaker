@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{{title}}}</title>
+    <link rel="stylesheet" href="{{filecss}}" />
+    <script type="module" src="{{filejs}}"></script>
+    <script>
+        window.H5P_CARETAKER_PATH = '{{path}}';
+    </script>
+</head>
+<body class="h5p-caretaker">
+    <header class="header">
+        <h1 class="title main-color">H5P Caretaker</h1>
+        {{{select_language}}}
+    </header>
+    <main class="page">
+        <div class="block background-dark">
+            <div class="centered-row block-visible">
+                <p class="main-color">{{{takecareofyourh5p}}}</p>
+                <h2 class="title">{{{checkyourh5pfileforimprovements}}}</h2>
+                <p>{{{uncoveraccessibilityissues}}}</p>
+                <div class="dropzone">
+                    <!-- Will be filled by dropzone.js -->
+                </div>
+            </div>
+        </div>
+        <div class="block background-dark">
+            <div class="centered-row">
+                <div class="filter-tree">
+                    <!-- Will be filled by content-filter.js -->
+                </div>
+            </div>
+        </div>
+        <div class="block background-light">
+            <div class="output centered-row">
+                <!-- <div class="output">
+                <!-- Will be filled by main.js -->
+                <!-- </div> -->
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                window.h5pcaretaker = new window.H5PCaretaker(
+                    {
+                        endpoint: '{{endpoint}}',
+                        sessionKeyName: '{{sessionKeyName}}',
+                        sessionKeyValue: '{{sessionKeyValue}}',
+                        l10n: {
+                            orDragTheFileHere: '{{orDragTheFileHere}}',
+                            removeFile: '{{removeFile}}',
+                            selectYourLanguage: '{{selectYourLanguage}}',
+                            uploadProgress: '{{uploadProgress}}',
+                            uploadYourH5Pfile: '{{uploadYourH5Pfile}}',
+                            yourFileIsBeingChecked: '{{yourFileIsBeingChecked}}',
+                            yourFileWasCheckedSuccessfully: '{{yourFileWasCheckedSuccessfully}}',
+                            totalMessages: '{{totalMessages}}',
+                            issues: '{{issues}}',
+                            results: '{{results}}',
+                            filterBy: '{{filterBy}}',
+                            groupBy: '{{groupBy}}',
+                            download: '{{download}}',
+                            expandAllMessages: '{{expandAllMessages}}',
+                            collapseAllMessages: '{{collapseAllMessages}}',
+                            allFilteredOut: '{{allFilteredOut}}',
+                            reportTitleTemplate: '{{reportTitleTemplate}}',
+                            contentFilter: '{{contentFilter}}',
+                            showAll: '{{showAll}}',
+                            showSelected: '{{showSelected}}',
+                            showNone: '{{showNone}}',
+                            filterByContent: '{{filterByContent}}',
+                            reset: '{{reset}}',
+                        },
+                    },
+                    {
+                        onInitialized: () => {},
+                        onUploadEnded: () => {}
+                    }
+                );
+            });
+        </script>
+    </main>
+</body>
+</html>

@@ -1,0 +1,5 @@
+<select class="select-language" name="language" id="select-language" data-locale-key="locale">
+  {{#locales}}
+    <option value="{{locale}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+  {{/locales}}
+</select>
