@@ -23,13 +23,11 @@
  * @license    https://opensource.org/license/mit MIT
  */
 
-define('H5PCARETAKER_FORCELOGIN_NO', '0');
-define('H5PCARETAKER_FORCELOGIN_YES', '1');
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
 use Ndlano\H5PCaretaker\H5PCaretaker;
+use local_h5pcaretaker\constants;
 
 /**
  * External API for H5P Caretaker.
@@ -40,24 +38,6 @@ use Ndlano\H5PCaretaker\H5PCaretaker;
  * @license    https://opensource.org/license/mit MIT
  */
 class local_h5pcaretaker {
-
-    /** HTTP status code for OK. */
-    private const HTTP_STATUS_OK = 200;
-
-    /** HTTP status code for forbidden. */
-    private const HTTP_STATUS_FORBIDDEN = 403;
-
-    /** HTTP status code for method not allowed. */
-    private const HTTP_STATUS_METHOD_NOT_ALLOWED = 405;
-
-    /** HTTP status code for payload too large. */
-    private const HTTP_STATUS_PAYLOAD_TOO_LARGE = 413;
-
-    /** HTTP status code for unprocessable entity. */
-    private const HTTP_STATUS_UNPROCESSABLE_ENTITY = 422;
-
-    /** HTTP status code for internal server error. */
-    private const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 
     /**
      * Handle API request to start the Caretaker procedure.
@@ -127,10 +107,10 @@ class local_h5pcaretaker {
         $analysis = $h5pcaretaker->analyze(['file' => $file['tmp_name']]);
 
         if (isset($analysis['error'])) {
-            self::done(self::HTTP_STATUS_UNPROCESSABLE_ENTITY, $analysis['error']);
+            self::done(constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, $analysis['error']);
         }
 
-        self::done(self::HTTP_STATUS_OK, $analysis['result']);
+        self::done(constants::HTTP_STATUS_OK, $analysis['result']);
     }
 
     /**
@@ -253,23 +233,23 @@ class local_h5pcaretaker {
      */
     private static function validate_request() {
         if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
-            self::done(self::HTTP_STATUS_METHOD_NOT_ALLOWED, get_string('error:methodNotAllowed'));
+            self::done(constants::HTTP_STATUS_METHOD_NOT_ALLOWED, get_string('error:methodNotAllowed'));
         }
 
         // Check if the user is allowed to use the Caretaker.
         $context = context_system::instance();
-        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? H5PCARETAKER_FORCELOGIN_YES;
+        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? constants::FORCELOGIN_YES;
         $forceloginrequired = $localh5pcaretakerforcelogin ===
-            (H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin'));
+            (constants::FORCELOGIN_YES || get_config('core', 'forcelogin'));
         if ($forceloginrequired && (!isloggedin() || !has_capability('local/h5pcaretaker:use', $context))) {
-            self::done(self::HTTP_STATUS_FORBIDDEN, get_string('error:forbidden'));
+            self::done(constants::HTTP_STATUS_FORBIDDEN, get_string('error:forbidden'));
         }
 
         // Verify file upload (size, which could cause this to fail here, too).
         $maxbytes = get_max_upload_file_size();
         if (!isset($_FILES['file'])) {
             self::done(
-                HTTP_STATUS_UNPROCESSABLE_ENTITY,
+                constants::HTTP_STATUS_UNPROCESSABLE_ENTITY,
                 sprintf(get_string('error:noFileOrTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
             );
         }
@@ -277,13 +257,13 @@ class local_h5pcaretaker {
         // Validate file upload.
         $file = $_FILES['file'];
         if (strval($file['error']) !== strval( UPLOAD_ERR_OK ) ) {
-            self::done(self::HTTP_STATUS_INTERNAL_SERVER_ERROR, get_string('error:unknownError'));
+            self::done(constants::HTTP_STATUS_INTERNAL_SERVER_ERROR, get_string('error:unknownError'));
         }
 
         // Validate file size.
         if (intval($file['size']) > $maxbytes) {
             self::done(
-                HTTP_STATUS_PAYLOAD_TOO_LARGE,
+                constants::HTTP_STATUS_PAYLOAD_TOO_LARGE,
                 sprintf(get_string('error:fileTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
             );
         }
@@ -292,9 +272,8 @@ class local_h5pcaretaker {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimetype = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
-        $allowedtypes = ['application/zip', 'application/x-zip-compressed', 'application/x-zip'];
-        if (!in_array($mimetype, $allowedtypes, true)) {
-            self::done(self::HTTP_STATUS_UNPROCESSABLE_ENTITY, get_string('error:notAnH5PFile', 'local_h5pcaretaker'));
+        if (!in_array($mimetype, constants::ALLOWED_MIME_TYPES, true)) {
+            self::done(constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, get_string('error:notAnH5PFile', 'local_h5pcaretaker'));
         }
 
         return $file;
@@ -325,7 +304,7 @@ class local_h5pcaretaker {
 
             return [$tmpextractdir, $cachedir];
         } catch (\Exception $e) {
-            self::done(self::HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
+            self::done(constants::HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
     }
 
