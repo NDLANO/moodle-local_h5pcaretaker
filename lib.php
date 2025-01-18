@@ -68,12 +68,12 @@ class local_h5pcaretaker {
         global $OUTPUT, $CFG, $SESSION;
 
         require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'vendor', 'autoload.php']));
-        require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'locale.php']));
+        require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'locale-utils.php']));
 
         // Set the language based on the browser's language.
         $httpacceptlanguage = self::get_http_accept_language();
         $querylocale = self::get_locale_from_query();
-        $locale = LocaleUtils::request_translation($querylocale ?? locale_accept_from_http($httpacceptlanguage));
+        $locale = locale_utils::request_translation($querylocale ?? locale_accept_from_http($httpacceptlanguage));
 
         $currentlocale = current_language();
 
@@ -106,71 +106,11 @@ class local_h5pcaretaker {
      * @return string The response message
      */
     public static function handler_upload() {
-        global $CFG, $USER;
+        global $CFG;
 
-        if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
-            self::done(HTTP_STATUS_METHOD_NOT_ALLOWED, get_string('error:methodNotAllowed'));
-        }
+        $file = self::validate_request();
 
-        $context = context_system::instance();
-
-        // Check if the user is allowed to use the Caretaker.
-        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? H5PCARETAKER_FORCELOGIN_YES;
-        $forceloginrequired = $localh5pcaretakerforcelogin ===
-            (H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin'));
-        if ($forceloginrequired && (!isloggedin() || !has_capability('local/h5pcaretaker:use', $context))) {
-            self::done(HTTP_STATUS_FORBIDDEN, get_string('error:forbidden'));
-        }
-
-        // Verify file upload (size, which could cause this to fail here, too).
-        $maxbytes = get_max_upload_file_size();
-        if (!isset($_FILES['file'])) {
-            self::done(
-                HTTP_STATUS_UNPROCESSABLE_ENTITY,
-                sprintf(get_string('error:noFileOrTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
-            );
-        }
-
-        // Validate file upload.
-        $file = $_FILES['file'];
-        if (strval($file['error']) !== strval( UPLOAD_ERR_OK ) ) {
-            self::done(HTTP_STATUS_INTERNAL_SERVER_ERROR, get_string('error:unknownError'));
-        }
-
-        // Validate file size.
-        if (intval($file['size']) > $maxbytes) {
-            self::done(
-                HTTP_STATUS_PAYLOAD_TOO_LARGE,
-                sprintf(get_string('error:fileTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
-            );
-        }
-
-        // Validate file type.
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimetype = finfo_file($finfo, $file['tmp_name']);
-        finfo_close($finfo);
-        $allowedtypes = ['application/zip', 'application/x-zip-compressed', 'application/x-zip'];
-        if (!in_array($mimetype, $allowedtypes, true)) {
-            self::done(422, get_string('error:notAnH5Pfile', 'local_h5pcaretaker'));
-        }
-
-        // Create temporary directory and cache directory.
-        try {
-            $filehash = bin2hex(random_bytes(32));
-            $uploaddir = make_temp_directory('download/' . $filehash);
-
-            $tmpextractdir = $uploaddir . DIRECTORY_SEPARATOR . 'uploads';
-            if (!is_dir($tmpextractdir) && !mkdir($tmpextractdir, 0755, true)) {
-                throw new \Exception(get_string('error:couldNotCreateUploadDirectory', 'local_h5pcaretaker'));
-            }
-
-            $cachedir = $CFG->dataroot . '/local_h5pcaretaker/cache';
-            if (!is_dir($cachedir) && !mkdir($cachedir, 0755, true)) {
-                throw new \Exception(get_string('error:couldNotCreateCacheDirectory', 'local_h5pcaretaker'));
-            }
-        } catch (\Exception $e) {
-            self::done(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
-        }
+        list($tmpextractdir, $cachedir) = self::create_directories();
 
         // Instantiate the Caretaker and return the analysis.
         $config = [
@@ -187,10 +127,10 @@ class local_h5pcaretaker {
         $analysis = $h5pcaretaker->analyze(['file' => $file['tmp_name']]);
 
         if (isset($analysis['error'])) {
-            self::done(HTTP_STATUS_UNPROCESSABLE_ENTITY, $analysis['error']);
+            self::done(self::HTTP_STATUS_UNPROCESSABLE_ENTITY, $analysis['error']);
         }
 
-        self::done(HTTP_STATUS_OK, $analysis['result']);
+        self::done(self::HTTP_STATUS_OK, $analysis['result']);
     }
 
     /**
@@ -290,7 +230,7 @@ class local_h5pcaretaker {
     public static function render_select_language($locale) {
         global $OUTPUT;
 
-        $availablelocales = LocaleUtils::get_available_locales();
+        $availablelocales = locale_utils::get_available_locales();
         $localeslookup = array_combine(
             $availablelocales,
             array_map('\Locale::getDisplayLanguage', $availablelocales, $availablelocales)
@@ -309,6 +249,87 @@ class local_h5pcaretaker {
     }
 
     /**
+     * Validate the request.
+     */
+    private static function validate_request() {
+        if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
+            self::done(self::HTTP_STATUS_METHOD_NOT_ALLOWED, get_string('error:methodNotAllowed'));
+        }
+
+        // Check if the user is allowed to use the Caretaker.
+        $context = context_system::instance();
+        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? H5PCARETAKER_FORCELOGIN_YES;
+        $forceloginrequired = $localh5pcaretakerforcelogin ===
+            (H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin'));
+        if ($forceloginrequired && (!isloggedin() || !has_capability('local/h5pcaretaker:use', $context))) {
+            self::done(self::HTTP_STATUS_FORBIDDEN, get_string('error:forbidden'));
+        }
+
+        // Verify file upload (size, which could cause this to fail here, too).
+        $maxbytes = get_max_upload_file_size();
+        if (!isset($_FILES['file'])) {
+            self::done(
+                HTTP_STATUS_UNPROCESSABLE_ENTITY,
+                sprintf(get_string('error:noFileOrTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
+            );
+        }
+
+        // Validate file upload.
+        $file = $_FILES['file'];
+        if (strval($file['error']) !== strval( UPLOAD_ERR_OK ) ) {
+            self::done(self::HTTP_STATUS_INTERNAL_SERVER_ERROR, get_string('error:unknownError'));
+        }
+
+        // Validate file size.
+        if (intval($file['size']) > $maxbytes) {
+            self::done(
+                HTTP_STATUS_PAYLOAD_TOO_LARGE,
+                sprintf(get_string('error:fileTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
+            );
+        }
+
+        // Validate file type.
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimetype = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+        $allowedtypes = ['application/zip', 'application/x-zip-compressed', 'application/x-zip'];
+        if (!in_array($mimetype, $allowedtypes, true)) {
+            self::done(self::HTTP_STATUS_UNPROCESSABLE_ENTITY, get_string('error:notAnH5PFile', 'local_h5pcaretaker'));
+        }
+
+        return $file;
+    }
+
+    /**
+     * Create temporary and cache directories.
+     *
+     * @return array An array containing the paths to the temporary and cache directories.
+     * @throws \Exception If the directories cannot be created.
+     */
+    private static function create_directories() {
+        global $CFG;
+
+        try {
+            $filehash = bin2hex(random_bytes(32));
+            $uploaddir = make_temp_directory('download/' . $filehash);
+
+            $tmpextractdir = $uploaddir . DIRECTORY_SEPARATOR . 'uploads';
+            if (!is_dir($tmpextractdir) && !mkdir($tmpextractdir, 0755, true)) {
+                throw new \Exception(get_string('error:couldNotCreateUploadDirectory', 'local_h5pcaretaker'));
+            }
+
+            $cachedir = $CFG->dataroot . '/local_h5pcaretaker/cache';
+            if (!is_dir($cachedir) && !mkdir($cachedir, 0755, true)) {
+                throw new \Exception(get_string('error:couldNotCreateCacheDirectory', 'local_h5pcaretaker'));
+            }
+
+            return [$tmpextractdir, $cachedir];
+        } catch (\Exception $e) {
+            self::done(self::HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
+        }
+    }
+
+    /**
      * Exit the script with an optional HTTP status code.
      *
      * @param int    $code    The HTTP status code to send.
@@ -317,12 +338,12 @@ class local_h5pcaretaker {
      * @return void
      */
     public static function done($code, $message) {
-        if (isset($message)) {
-            echo $message;
-        }
-
         if (isset($code)) {
             http_response_code($code);
+        }
+
+        if (isset($message)) {
+            echo $message;
         }
 
         exit();

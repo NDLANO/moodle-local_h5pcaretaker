@@ -35,6 +35,7 @@ $string['error:fileTooLarge'] = 'The file is larger than the limit of %s bytes.'
 $string['error:forbidden'] = 'Forbidden';
 $string['error:methodNotAllowed'] = 'Method Not Allowed';
 $string['error:noFileOrTooLarge'] = 'It seems that no file was provided or it exceeds the file upload size limit of %s KB.';
+$string['error:notAnH5PFile'] = 'The file is not an H5P file.';
 $string['error:unknownError'] = 'Something went wrong, but I dunno what, sorry!';
 $string['expand:collapseAllMessages'] = 'Collapse all messages';
 $string['expand:expandAllMessages'] = 'Expand all messages';

@@ -22,7 +22,7 @@
  * phpcs:ignore moodle.Commenting.FileExpectedTags.LicenseTagInvalid
  * @license    https://opensource.org/license/mit MIT
  */
-class LocaleUtils {
+class locale_utils {
     /**
      * The path to the locale files in a wWordPress plugin.
      *
