@@ -22,6 +22,12 @@
  * phpcs:ignore moodle.Commenting.FileExpectedTags.LicenseTagInvalid
  * @license    https://opensource.org/license/mit MIT
  */
+
+namespace local_h5pcaretaker;
+
+/**
+ * Utility class for handling locale operations.
+ */
 class locale_utils {
     /**
      * The path to the locale files in a wWordPress plugin.
@@ -77,6 +83,8 @@ class locale_utils {
      * If the locale is not available, the default locale is used.
      *
      * @param string $localerequested The locale that could be served.
+     *
+     * @return string The locale to use.
      */
     public static function request_translation($localerequested) {
         $locale = explode('_', $localerequested)[0]; // Caretaker does not support regional locales yet.

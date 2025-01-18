@@ -34,6 +34,7 @@ define('H5PCARETAKER_FORCELOGIN_YES', '1');
 require_once(__DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
 use Ndlano\H5PCaretaker\H5PCaretaker;
 use local_h5pcaretaker\constants;
+use local_h5pcaretaker\locale_utils;
 
 /**
  * External API for H5P Caretaker.
@@ -53,7 +54,6 @@ class local_h5pcaretaker {
     public static function handler_start() {
         global $OUTPUT, $CFG, $SESSION;
 
-        require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'vendor', 'autoload.php']));
         require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'locale-utils.php']));
 
         // Set the language based on the browser's language.
