@@ -30,7 +30,7 @@ namespace local_h5pcaretaker;
  */
 class locale_utils {
     /**
-     * The path to the locale files in a wWordPress plugin.
+     * The path to the locale files.
      *
      * @var string
      */
