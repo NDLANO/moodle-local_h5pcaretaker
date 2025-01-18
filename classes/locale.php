@@ -59,7 +59,17 @@ class LocaleUtils {
             }
         );
 
-        return array_unique(array_merge([self::$defaultlocale], $foundlocales));
+        $moodlelocales = get_string_manager()->get_list_of_translations();
+        $moodlelocales = array_keys(array_filter($moodlelocales, function ($key) {
+            return strpos($key, '_') === false; // Caretaker does not support regional locales yet.
+        }, ARRAY_FILTER_USE_KEY));
+
+        // Moodle can only set the languages if it has the corresponding language pack installed.
+        $availablelocales = array_filter($foundlocales, function ($locale) use ($moodlelocales) {
+            return in_array($locale, $moodlelocales, true);
+        });
+
+        return array_unique(array_merge([self::$defaultlocale], $availablelocales));
     }
 
     /**
@@ -69,18 +79,8 @@ class LocaleUtils {
      * @param string $localerequested The locale that could be served.
      */
     public static function request_translation($localerequested) {
-        $locale = explode('_', $localerequested)[0];
+        $locale = explode('_', $localerequested)[0]; // Caretaker does not support regional locales yet.
         $availablelocales = self::get_available_locales();
-
-        $moodlelocales = get_string_manager()->get_list_of_translations();
-        $moodlelocales = array_keys(array_filter($moodlelocales, function ($key) {
-            return strpos($key, '_') === false; // Caretaker does not support regional locales.
-        }, ARRAY_FILTER_USE_KEY));
-
-        // Moodle can only set the languages if it has the corresponding language pack installed.
-        $availablelocales = array_filter($availablelocales, function ($locale) use ($moodlelocales) {
-            return in_array($locale, $moodlelocales, true);
-        });
 
         if (!in_array($locale, $availablelocales, true)) {
             return self::$defaultlocale;
