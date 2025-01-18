@@ -41,24 +41,39 @@ use Ndlano\H5PCaretaker\H5PCaretaker;
  */
 class local_h5pcaretaker {
 
+    /** HTTP status code for OK. */
+    private const HTTP_STATUS_OK = 200;
+
+    /** HTTP status code for forbidden. */
+    private const HTTP_STATUS_FORBIDDEN = 403;
+
+    /** HTTP status code for method not allowed. */
+    private const HTTP_STATUS_METHOD_NOT_ALLOWED = 405;
+
+    /** HTTP status code for payload too large. */
+    private const HTTP_STATUS_PAYLOAD_TOO_LARGE = 413;
+
+    /** HTTP status code for unprocessable entity. */
+    private const HTTP_STATUS_UNPROCESSABLE_ENTITY = 422;
+
+    /** HTTP status code for internal server error. */
+    private const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
+
     /**
-     * Handle API request.
+     * Handle API request to start the Caretaker procedure.
      *
-     * @return string The response message
+     * @return string The response message.
      */
     public static function handler_start() {
         global $OUTPUT, $CFG, $SESSION;
 
-        require_once(__DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
-        require_once(__DIR__ . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'locale.php');
-
-        $httpacceptlanguage = self::get_http_accept_language();
-        $getlocale          = self::get_locale_from_query();
+        require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'vendor', 'autoload.php']));
+        require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'locale.php']));
 
         // Set the language based on the browser's language.
-        $locale = LocaleUtils::request_translation(
-            empty($getlocale) ? locale_accept_from_http($httpacceptlanguage) : $getlocale
-        );
+        $httpacceptlanguage = self::get_http_accept_language();
+        $querylocale = self::get_locale_from_query();
+        $locale = LocaleUtils::request_translation($querylocale ?? locale_accept_from_http($httpacceptlanguage));
 
         $currentlocale = current_language();
 
@@ -66,6 +81,7 @@ class local_h5pcaretaker {
         $SESSION->lang = $locale;
         get_string_manager()->reset_caches();
 
+        // Load the H5P Caretaker client.
         $distdir = join(DIRECTORY_SEPARATOR, [__DIR__, 'node_modules', 'h5p-caretaker-client', 'dist']);
         $disturl = '/local/h5pcaretaker/node_modules/h5p-caretaker-client/dist';
 
@@ -85,7 +101,7 @@ class local_h5pcaretaker {
     }
 
     /**
-     * Handle API request.
+     * Handle API request to upload a file.
      *
      * @return string The response message
      */
@@ -93,42 +109,39 @@ class local_h5pcaretaker {
         global $CFG, $USER;
 
         if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
-            self::done(405, get_string('error:methodNotAllowed'));
+            self::done(HTTP_STATUS_METHOD_NOT_ALLOWED, get_string('error:methodNotAllowed'));
         }
 
         $context = context_system::instance();
-        $localh5pcaretakerconfig = get_config('local_h5pcaretaker');
-        $localh5pcaretakerforcelogin = $localh5pcaretakerconfig->forcelogin ?? H5PCARETAKER_FORCELOGIN_YES;
 
-        if ($localh5pcaretakerforcelogin === H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin')) {
-            if (!isloggedin() || !has_capability('local/h5pcaretaker:use', $context)) {
-                self::done(403, get_string('error:forbidden'));
-            }
+        // Check if the user is allowed to use the Caretaker.
+        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? H5PCARETAKER_FORCELOGIN_YES;
+        $forceloginrequired = $localh5pcaretakerforcelogin ===
+            (H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin'));
+        if ($forceloginrequired && (!isloggedin() || !has_capability('local/h5pcaretaker:use', $context))) {
+            self::done(HTTP_STATUS_FORBIDDEN, get_string('error:forbidden'));
         }
 
+        // Verify file upload (size, which could cause this to fail here, too).
         $maxbytes = get_max_upload_file_size();
         if (!isset($_FILES['file'])) {
             self::done(
-                422,
-                sprintf(
-                    get_string('error:noFileOrTooLarge', 'local_h5pcaretaker'),
-                    $maxbytes / 1024
-                )
+                HTTP_STATUS_UNPROCESSABLE_ENTITY,
+                sprintf(get_string('error:noFileOrTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
             );
         }
 
+        // Validate file upload.
         $file = $_FILES['file'];
         if (strval($file['error']) !== strval( UPLOAD_ERR_OK ) ) {
-            self::done(500, get_string('error:unknownError'));
+            self::done(HTTP_STATUS_INTERNAL_SERVER_ERROR, get_string('error:unknownError'));
         }
 
+        // Validate file size.
         if (intval($file['size']) > $maxbytes) {
             self::done(
-                413,
-                sprintf(
-                    get_string('error:fileTooLarge', 'local_h5pcaretaker'),
-                    $maxbytes / 1024
-                )
+                HTTP_STATUS_PAYLOAD_TOO_LARGE,
+                sprintf(get_string('error:fileTooLarge', 'local_h5pcaretaker'), $maxbytes / 1024)
             );
         }
 
@@ -136,13 +149,12 @@ class local_h5pcaretaker {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimetype = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
-
         $allowedtypes = ['application/zip', 'application/x-zip-compressed', 'application/x-zip'];
         if (!in_array($mimetype, $allowedtypes, true)) {
             self::done(422, get_string('error:notAnH5Pfile', 'local_h5pcaretaker'));
         }
 
-        // Create secure temporary directory.
+        // Create temporary directory and cache directory.
         try {
             $filehash = bin2hex(random_bytes(32));
             $uploaddir = make_temp_directory('download/' . $filehash);
@@ -157,9 +169,10 @@ class local_h5pcaretaker {
                 throw new \Exception(get_string('error:couldNotCreateCacheDirectory', 'local_h5pcaretaker'));
             }
         } catch (\Exception $e) {
-            self::done(500, $e->getMessage());
+            self::done(HTTP_STATUS_INTERNAL_SERVER_ERROR, $e->getMessage());
         }
 
+        // Instantiate the Caretaker and return the analysis.
         $config = [
             'uploadsPath' => $tmpextractdir,
             'cachePath'   => $cachedir,
@@ -173,11 +186,11 @@ class local_h5pcaretaker {
         $h5pcaretaker = new H5PCaretaker($config);
         $analysis = $h5pcaretaker->analyze(['file' => $file['tmp_name']]);
 
-        if (isset( $analysis['error'])) {
-            self::done(422, $analysis['error']);
+        if (isset($analysis['error'])) {
+            self::done(HTTP_STATUS_UNPROCESSABLE_ENTITY, $analysis['error']);
         }
 
-        self::done( 200, $analysis['result'] );
+        self::done(HTTP_STATUS_OK, $analysis['result']);
     }
 
     /**
@@ -230,8 +243,8 @@ class local_h5pcaretaker {
             'filejs' => $filejs,
             'path' => $path,
             'exportremoveid' => $exportremoveid,
-            'intro' => get_config('local_h5pcaretaker')->extratext_intro ?? null,
-            'footer' => get_config('local_h5pcaretaker')->extratext_footer ?? null,
+            'intro' => get_config('local_h5pcaretaker', 'extratext_intro'),
+            'footer' => get_config('local_h5pcaretaker', 'extratext_footer'),
             'endpoint' => $CFG->wwwroot . '/local/h5pcaretaker/index.php',
             'sessionKeyName' => 'sesskey',
             'sessionKeyValue' => sesskey(),
@@ -271,6 +284,7 @@ class local_h5pcaretaker {
      * Render the language selection dropdown.
      *
      * @param string $locale The current locale to set selected.
+     *
      * @return string The rendered HTML.
      */
     public static function render_select_language($locale) {

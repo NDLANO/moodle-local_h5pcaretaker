@@ -23,6 +23,7 @@
  * @license    https://opensource.org/license/mit MIT
  */
 
+// Login is not a mandatory requirement for this page.
 // phpcs:ignore moodle.Files.RequireLogin.Missing
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
@@ -40,9 +41,7 @@ $PAGE->set_title(get_string('site:title', 'local_h5pcaretaker'));
 $PAGE->set_heading(get_string('site:title', 'local_h5pcaretaker'));
 
 // Page is supposed to be accessed by users who are not logged in if plugin is explicitly configured to allow it.
-$localh5pcaretakerconfig = get_config('local_h5pcaretaker');
-$localh5pcaretakerforcelogin = $localh5pcaretakerconfig->forcelogin ?? H5PCARETAKER_FORCELOGIN_YES;
-
+$localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? H5PCARETAKER_FORCELOGIN_YES;
 if ($localh5pcaretakerforcelogin === H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin')) {
     require_login(); // H5P Caretaker is not set to be public, so require login.
     require_capability('local/h5pcaretaker:use', $context); // Logged in users must have the capability to use H5P Caretaker.
