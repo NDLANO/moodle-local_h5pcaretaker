@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * lib.php
+ *
+ * @package    local_h5pcaretaker
+ * @copyright  2025 NDLA <explore@ndla.no>
+ * phpcs:ignore moodle.Commenting.FileExpectedTags.LicenseTagInvalid
+ * @license    https://opensource.org/license/mit MIT
+ */
+
 define('H5PCARETAKER_FORCELOGIN_NO', '0');
 define('H5PCARETAKER_FORCELOGIN_YES', '1');
 
@@ -81,7 +90,7 @@ class local_h5pcaretaker {
      * @return string The response message
      */
     public static function handler_upload() {
-        global $USER;
+        global $CFG, $USER;
 
         if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
             self::done(405, get_string('error:methodNotAllowed'));
@@ -143,7 +152,7 @@ class local_h5pcaretaker {
                 throw new \Exception(get_string('error:couldNotCreateUploadDirectory', 'local_h5pcaretaker'));
             }
 
-            $cachedir = $uploaddir . DIRECTORY_SEPARATOR . 'cache';
+            $cachedir = $CFG->dataroot . '/local_h5pcaretaker/cache';
             if (!is_dir($cachedir) && !mkdir($cachedir, 0755, true)) {
                 throw new \Exception(get_string('error:couldNotCreateCacheDirectory', 'local_h5pcaretaker'));
             }
