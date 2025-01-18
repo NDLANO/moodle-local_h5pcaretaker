@@ -29,11 +29,6 @@ namespace local_h5pcaretaker;
  * Constants class for H5P Caretaker.
  */
 class constants {
-    /** @var string Do not require login to access H5P Caretaker */
-    public const FORCELOGIN_NO = '0';
-
-    /** @var string Require login to access H5P Caretaker */
-    public const FORCELOGIN_YES = '1';
 
     /** @var int HTTP status code for successful response */
     public const HTTP_STATUS_OK = 200;

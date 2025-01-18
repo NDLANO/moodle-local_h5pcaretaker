@@ -25,6 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/** @var string Do not require login to access H5P Caretaker */
+define('H5PCARETAKER_FORCELOGIN_NO', '0');
+
+/** @var string Require login to access H5P Caretaker */
+define('H5PCARETAKER_FORCELOGIN_YES', '1');
+
 require_once(__DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
 use Ndlano\H5PCaretaker\H5PCaretaker;
 use local_h5pcaretaker\constants;
@@ -51,8 +57,8 @@ class local_h5pcaretaker {
         require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'locale-utils.php']));
 
         // Set the language based on the browser's language.
-        $httpacceptlanguage = self::get_http_accept_language();
-        $querylocale = self::get_locale_from_query();
+        $httpacceptlanguage = locale_utils::get_http_accept_language();
+        $querylocale = locale_utils::get_locale_from_query();
         $locale = locale_utils::request_translation($querylocale ?? locale_accept_from_http($httpacceptlanguage));
 
         $currentlocale = current_language();
@@ -111,24 +117,6 @@ class local_h5pcaretaker {
         }
 
         self::done(constants::HTTP_STATUS_OK, $analysis['result']);
-    }
-
-    /**
-     * Get the locale from the HTTP Accept-Language header.
-     *
-     * @return string The locale from the HTTP Accept-Language header.
-     */
-    private static function get_http_accept_language() {
-        return isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? clean_param($_SERVER['HTTP_ACCEPT_LANGUAGE'], PARAM_TEXT) : '';
-    }
-
-    /**
-     * Get the locale from the query.
-     *
-     * @return string The locale from the query.
-     */
-    private static function get_locale_from_query() {
-        return clean_param(optional_param('locale', '', PARAM_TEXT), PARAM_TEXT);
     }
 
     /**
@@ -238,9 +226,9 @@ class local_h5pcaretaker {
 
         // Check if the user is allowed to use the Caretaker.
         $context = context_system::instance();
-        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? constants::FORCELOGIN_YES;
+        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? H5PCARETAKER_FORCELOGIN_YES;
         $forceloginrequired = $localh5pcaretakerforcelogin ===
-            (constants::FORCELOGIN_YES || get_config('core', 'forcelogin'));
+            (H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin'));
         if ($forceloginrequired && (!isloggedin() || !has_capability('local/h5pcaretaker:use', $context))) {
             self::done(constants::HTTP_STATUS_FORBIDDEN, get_string('error:forbidden'));
         }
@@ -273,7 +261,9 @@ class local_h5pcaretaker {
         $mimetype = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
         if (!in_array($mimetype, constants::ALLOWED_MIME_TYPES, true)) {
-            self::done(constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, get_string('error:notAnH5PFile', 'local_h5pcaretaker'));
+            self::done(
+                constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, get_string('error:notAnH5PFile', 'local_h5pcaretaker')
+            );
         }
 
         return $file;

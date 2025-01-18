@@ -88,4 +88,24 @@ class locale_utils {
 
         return $locale;
     }
+
+    /**
+     * Get the locale from the HTTP Accept-Language header.
+     *
+     * @return string The locale from the HTTP Accept-Language header.
+     */
+    public static function get_http_accept_language() {
+        return isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ?
+            clean_param($_SERVER['HTTP_ACCEPT_LANGUAGE'], PARAM_TEXT) :
+            '';
+    }
+
+    /**
+     * Get the locale from the query.
+     *
+     * @return string The locale from the query.
+     */
+    public static function get_locale_from_query() {
+        return clean_param(optional_param('locale', '', PARAM_TEXT), PARAM_TEXT);
+    }
 }
