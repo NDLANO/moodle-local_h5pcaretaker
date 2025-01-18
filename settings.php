@@ -36,6 +36,7 @@ $settings = new admin_settingpage(
   get_string('pluginname', 'local_h5pcaretaker')
 );
 
+// Settings for H5P Caretaker visibility.
 $settings->add(new admin_setting_configselect(
   'local_h5pcaretaker/forcelogin',
   get_string('moodle:forcelogin', 'local_h5pcaretaker'),
@@ -45,6 +46,24 @@ $settings->add(new admin_setting_configselect(
       H5PCARETAKER_FORCELOGIN_NO => get_string('moodle:public', 'local_h5pcaretaker'),
       H5PCARETAKER_FORCELOGIN_YES => get_string('moodle:needscapability', 'local_h5pcaretaker'),
   ]
+));
+
+// HTML field for additional introductory text.
+$settings->add(new admin_setting_confightmleditor(
+  'local_h5pcaretaker/extratext_intro',
+  get_string('moodle:extratext_intro', 'local_h5pcaretaker'),
+  get_string('moodle:extratext_intro_desc', 'local_h5pcaretaker'),
+  null,
+  PARAM_RAW
+));
+
+// HTML field for additional footer text.
+$settings->add(new admin_setting_confightmleditor(
+  'local_h5pcaretaker/extratext_footer',
+  get_string('moodle:extratext_footer', 'local_h5pcaretaker'),
+  get_string('moodle:extratext_footer_desc', 'local_h5pcaretaker'),
+  null,
+  PARAM_RAW
 ));
 
 $ADMIN->add('localplugins', $settings);

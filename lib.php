@@ -230,6 +230,8 @@ class local_h5pcaretaker {
             'filejs' => $filejs,
             'path' => $path,
             'exportremoveid' => $exportremoveid,
+            'intro' => get_config('local_h5pcaretaker')->extratext_intro ?? null,
+            'footer' => get_config('local_h5pcaretaker')->extratext_footer ?? null,
             'endpoint' => $CFG->wwwroot . '/local/h5pcaretaker/index.php',
             'sessionKeyName' => 'sesskey',
             'sessionKeyValue' => sesskey(),
