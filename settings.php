@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once(__DIR__ . '/lib.php');
 
+use local_h5pcaretaker\constants;
+
 if (!$hassiteconfig) {
     return;
 }
@@ -41,10 +43,10 @@ $settings->add(new admin_setting_configselect(
   'local_h5pcaretaker/forcelogin',
   get_string('moodle:forcelogin', 'local_h5pcaretaker'),
   get_string('moodle:forcelogin_desc', 'local_h5pcaretaker'),
-  H5PCARETAKER_FORCELOGIN_YES,
+  constants::FORCELOGIN_YES,
   [
-      H5PCARETAKER_FORCELOGIN_NO => get_string('moodle:public', 'local_h5pcaretaker'),
-      H5PCARETAKER_FORCELOGIN_YES => get_string('moodle:needscapability', 'local_h5pcaretaker'),
+      constants::FORCELOGIN_NO => get_string('moodle:public', 'local_h5pcaretaker'),
+      constants::FORCELOGIN_YES => get_string('moodle:needscapability', 'local_h5pcaretaker'),
   ]
 ));
 

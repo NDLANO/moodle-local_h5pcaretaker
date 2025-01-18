@@ -25,12 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/** @var string Do not require login to access H5P Caretaker */
-define('H5PCARETAKER_FORCELOGIN_NO', '0');
-
-/** @var string Require login to access H5P Caretaker */
-define('H5PCARETAKER_FORCELOGIN_YES', '1');
-
 require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'vendor', 'autoload.php']));
 require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'locale_utils.php']));
 
@@ -226,9 +220,9 @@ class local_h5pcaretaker {
 
         // Check if the user is allowed to use the Caretaker.
         $context = context_system::instance();
-        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? H5PCARETAKER_FORCELOGIN_YES;
+        $localh5pcaretakerforcelogin = get_config('local_h5pcaretaker', 'forcelogin') ?? constants::FORCELOGIN_YES;
         $forceloginrequired = $localh5pcaretakerforcelogin ===
-            (H5PCARETAKER_FORCELOGIN_YES || get_config('core', 'forcelogin'));
+            (constants::FORCELOGIN_YES || get_config('core', 'forcelogin'));
         if ($forceloginrequired && (!isloggedin() || !has_capability('local/h5pcaretaker:use', $context))) {
             self::done(constants::HTTP_STATUS_FORBIDDEN, get_string('error:forbidden'));
         }
@@ -261,9 +255,7 @@ class local_h5pcaretaker {
         $mimetype = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
         if (!in_array($mimetype, constants::ALLOWED_MIME_TYPES, true)) {
-            self::done(
-                constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, get_string('error:notAnH5PFile', 'local_h5pcaretaker')
-            );
+            self::done(constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, get_string('error:notAnH5PFile', 'local_h5pcaretaker'));
         }
 
         return $file;
