@@ -11,4 +11,4 @@ TODO
 TODO
 
 ## License
-The H5P Caretaker is is licensed under the [MIT License](https://github.com/otacke/h5pxapikatchu/blob/master/LICENSE).
+The H5P Caretaker plugin for Moodle is is licensed under the [MIT License](https://github.com/otacke/h5pxapikatchu/blob/master/LICENSE).
