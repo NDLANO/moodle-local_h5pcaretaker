@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once(__DIR__ . '/lib.php');
-
 use local_h5pcaretaker\constants;
 
 if (!$hassiteconfig) {

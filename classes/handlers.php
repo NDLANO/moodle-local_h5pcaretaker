@@ -23,11 +23,14 @@
  * @license    https://opensource.org/license/mit MIT
  */
 
+namespace local_h5pcaretaker;
+use core\context\system as context_system;
+
 defined('MOODLE_INTERNAL') || die();
 
-require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'vendor', 'autoload.php']));
-require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'locale_utils.php']));
-require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'classes', 'render.php']));
+require_once(join(DIRECTORY_SEPARATOR, [__DIR__, '..', 'vendor', 'autoload.php']));
+require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'locale_utils.php']));
+require_once(join(DIRECTORY_SEPARATOR, [__DIR__, 'render.php']));
 
 use Ndlano\H5PCaretaker\H5PCaretaker;
 use local_h5pcaretaker\constants;
@@ -42,7 +45,7 @@ use local_h5pcaretaker\render;
  * phpcs:ignore moodle.Commenting.FileExpectedTags.LicenseTagInvalid
  * @license    https://opensource.org/license/mit MIT
  */
-class local_h5pcaretaker {
+class handlers {
 
     /**
      * Handle API request to start the Caretaker procedure.
@@ -64,7 +67,7 @@ class local_h5pcaretaker {
         get_string_manager()->reset_caches();
 
         // Load the H5P Caretaker client.
-        $distdir = join(DIRECTORY_SEPARATOR, [__DIR__, 'node_modules', 'h5p-caretaker-client', 'dist']);
+        $distdir = join(DIRECTORY_SEPARATOR, [__DIR__, '..', 'node_modules', 'h5p-caretaker-client', 'dist']);
         $disturl = '/local/h5pcaretaker/node_modules/h5p-caretaker-client/dist';
 
         render::render_html(

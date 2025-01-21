@@ -26,8 +26,9 @@
 // Login is not a mandatory requirement for this page.
 // phpcs:ignore moodle.Files.RequireLogin.Missing
 require_once(__DIR__ . '/../../config.php');
-require_once(__DIR__ . '/lib.php');
+require_once(__DIR__ . '/classes/handlers.php');
 use core\context\system as context_system;
+use local_h5pcaretaker\handlers;
 use local_h5pcaretaker\constants;
 
 defined('MOODLE_INTERNAL') || die();
@@ -53,10 +54,10 @@ try {
         require_sesskey(); // Verify CSRF token for POST requests.
 
         // Handle file upload.
-        $response = local_h5pcaretaker::handler_upload();
+        $response = handlers::handler_upload();
     } else {
         // Display upload form with CSRF protection.
-        $response = local_h5pcaretaker::handler_start();
+        $response = handlers::handler_start();
     }
 
     // This site is not supposed to have a header or footer.
