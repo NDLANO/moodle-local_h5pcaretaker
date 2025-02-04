@@ -29,6 +29,7 @@ jobs:
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
           zip -r "$ZIP_NAME" . \
             -x ".github/*" ".gitignore" ".git/*" \
+            "docs/*" \
             "composer.json" "composer.lock" \
             "package.json" "package-lock.json"
 
