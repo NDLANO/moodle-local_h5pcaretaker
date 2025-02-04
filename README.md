@@ -31,7 +31,7 @@ Go to the settings _Site administration > Plugins > Local Plugins > NDLA's H5P C
 - add introductory text that should be displayed on the page on top of the upload button, and
 - add footer text that should be displayed at the bottom of the page.
 
-## Usage
+## Use
 The plugin will set up the URL <your-moodle-site>/local/h5p-caretaker. Go there, upload an H5P file
 and check the report for potential improvements of the content. If you want to be the page to be available under a different URL, you can do this by setting up appropriate rewrite rules on your server.
 
