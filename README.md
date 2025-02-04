@@ -10,7 +10,7 @@ Users can upload files temporarily for checking and receive a report that they c
 ![H5P Caretaker: Report](docs/screenshot_report.jpg?raw=true)
 
 ## Install
-### Moodle Plugin Directory
+### Use Moodle Plugin Directory
 Install the _NDLA's H5P Caretaker_ plugin via the Moodle Plugin directory (not available yet).
 
 ### Upload ZIP file
