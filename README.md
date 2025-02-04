@@ -33,7 +33,8 @@ Go to the settings _Site administration > Plugins > Local Plugins > NDLA's H5P C
 
 ## Usage
 The plugin will set up the URL <your-moodle-site>/local/h5p-caretaker. Go there, upload an H5P file
-and check the report for potential improvements of the content.
+and check the report for potential improvements of the content. If you want to be the page to be available under a different URL, you can do this by setting up appropriate rewrite rules on your server.
+
 The plugin will also add an `H5P Caretaker` menu item to the toolbar of a course.
 
 ## Privacy
