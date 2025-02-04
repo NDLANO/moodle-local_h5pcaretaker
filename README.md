@@ -38,7 +38,7 @@ and check the report for potential improvements of the content. If you want to b
 The plugin will also add an `H5P Caretaker` menu item to the toolbar of a course.
 
 ## Privacy
-Please note that the uploaded H5P file will be removed immediately after analyzing it. It will not be stored permanently or used for any thing else.
+Please note that the uploaded H5P file will be removed immediately after analyzing it. It will not be stored permanently or used for anything else.
 Please also note that the plugin will fetch the H5P accessibility reports from https://studio.libretexts.org/help/h5p-accessibility-guide and display those inside the report if appropriate. No personal information is shared in that process.
 
 ## License
