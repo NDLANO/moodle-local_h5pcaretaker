@@ -12,8 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract release version
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - name: Extract version from version.php
+        run: |
+          VERSION=$(grep -oP '\$plugin->version\s*=\s*\K\d+' version.php)
+          echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Install Node.js dependencies
         run: npm install --production
@@ -23,7 +25,7 @@ jobs:
 
       - name: Create versioned ZIP file
         run: |
-          ZIP_NAME="moodle-local_h5pcarateker-${{ env.RELEASE_VERSION }}.zip"
+          ZIP_NAME="moodle-local_h5pcarateker-${{ env.PLUGIN_VERSION }}.zip"
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
           zip -r "$ZIP_NAME" . \
             -x ".github/*" ".gitignore" ".git/*" \
