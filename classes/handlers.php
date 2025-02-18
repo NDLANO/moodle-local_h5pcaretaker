@@ -67,8 +67,11 @@ class handlers {
         get_string_manager()->reset_caches();
 
         // Load the H5P Caretaker client.
-        $distdir = join(DIRECTORY_SEPARATOR, [__DIR__, '..', 'node_modules', 'h5p-caretaker-client', 'dist']);
-        $disturl = '/local/h5pcaretaker/node_modules/h5p-caretaker-client/dist';
+        $distdir = join(
+            DIRECTORY_SEPARATOR,
+            [__DIR__, '..', 'node_modules', '@explorendla', 'h5p-caretaker-client', 'dist', '@explorendla']
+        );
+        $disturl = '/local/h5pcaretaker/node_modules/@explorendla/h5p-caretaker-client/dist/@explorendla';
 
         render::render_html(
             $disturl . '/' . self::get_file_by_pattern( $distdir, 'h5p-caretaker-client-*.js' ),
