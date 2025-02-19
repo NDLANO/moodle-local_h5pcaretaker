@@ -26,7 +26,7 @@
 $string['callToAction'] = 'Check your H5P file for improvements';
 $string['callToActionDetails'] = 'Upload your H5P file and uncover accessibility issues, missing information and best practices that can help you improve your H5P content.';
 $string['dropzone:fileBeingChecked'] = 'Your file is being checked';
-$string['dropzone:fileCheckedSuccessfully'] = 'Your file was checked successfully';
+$string['dropzone:fileCheckedSuccessfully'] = 'Your file check was completed';
 $string['dropzone:orDragTheFileHere'] = 'or drag the file here';
 $string['dropzone:removeFile'] = 'Remove file';
 $string['dropzone:uploadH5PFile'] = 'Upload your H5P file';

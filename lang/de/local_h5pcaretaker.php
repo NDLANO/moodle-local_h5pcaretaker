@@ -24,8 +24,8 @@
  */
 $string['callToAction'] = 'Überprüfe deine H5P-Datei auf Verbesserungen';
 $string['callToActionDetails'] = 'Lade deine H5P-Datei hoch und entdecke Barrierefreiheitsprobleme, fehlende Informationen und bewährte Praktiken, die dir helfen können, deine H5P-Inhalte zu verbessern.';
-$string['dropzone:fileBeingChecked'] = 'Your file is being checked';
-$string['dropzone:fileCheckedSuccessfully'] = 'Your file was checked successfully';
+$string['dropzone:fileBeingChecked'] = 'Deine Datei wird geprüft';
+$string['dropzone:fileCheckedSuccessfully'] = 'Die Prüfung deiner Datei wurde abgeschlossen';
 $string['dropzone:orDragTheFileHere'] = 'oder ziehe die Datei hierher';
 $string['dropzone:removeFile'] = 'Entferne Datei';
 $string['dropzone:uploadH5PFile'] = 'Lade deine H5P-Datei hoch';
