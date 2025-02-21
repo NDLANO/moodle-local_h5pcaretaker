@@ -25,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025020400;           // The current plugin version (YYYYMMDDXX).
+$plugin->version   = 2025022100;           // The current plugin version (YYYYMMDDXX).
 $plugin->requires  = 2024042200;           // Requires this Moodle version.
 $plugin->component = 'local_h5pcaretaker'; // Full name of the plugin (used for upgrades, etc.).
 $plugin->maturity  = MATURITY_STABLE;      // Set to MATURITY_STABLE when ready for release.
-$plugin->release   = 'v1.0';               // Release version.
+$plugin->release   = 'v1.0.1';             // Release version.
