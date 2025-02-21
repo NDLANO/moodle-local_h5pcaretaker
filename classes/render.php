@@ -77,6 +77,8 @@ class render {
             'filterBy' => get_string('results:filterBy', 'local_h5pcaretaker'),
             'groupBy' => get_string('results:groupBy', 'local_h5pcaretaker'),
             'download' => get_string('results:download', 'local_h5pcaretaker'),
+            'showDetails' => get_string('results:showDetails', 'local_h5pcaretaker'),
+            'hideDetails' => get_string('results:hideDetails', 'local_h5pcaretaker'),
             'expandAllMessages' => get_string('expand:expandAllMessages', 'local_h5pcaretaker'),
             'collapseAllMessages' => get_string('expand:collapseAllMessages', 'local_h5pcaretaker'),
             'reportTitleTemplate' => get_string('report:titleTemplate', 'local_h5pcaretaker'),
