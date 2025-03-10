@@ -30,6 +30,7 @@ $string['dropzone:orDragTheFileHere'] = 'oder ziehe die Datei hierher';
 $string['dropzone:removeFile'] = 'Entferne Datei';
 $string['dropzone:uploadH5PFile'] = 'Lade deine H5P-Datei hoch';
 $string['dropzone:uploadProgress'] = 'Upload-Fortschritt';
+$string["error:checkServerLog"] = "Bitte prüfe die Server-Logs.";
 $string['error:fileTooLarge'] = 'Die Datei ist größer als das Limit von %s Bytes.';
 $string['error:forbidden'] = 'Verboten';
 $string['error:methodNotAllowed'] = 'Methode nicht erlaubt';
