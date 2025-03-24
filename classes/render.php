@@ -110,7 +110,7 @@ class render {
         $locales = array_map(function($availablelocale) use ($locale, $localeslookup) {
             return [
                 'locale' => $availablelocale,
-                'name' => $localeslookup[$availablelocale],
+                'name' => ucfirst($localeslookup[$availablelocale]),
                 'selected' => $availablelocale === $locale,
             ];
         }, $availablelocales);
