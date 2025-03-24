@@ -25,13 +25,24 @@ jobs:
 
       - name: Create versioned ZIP file
         run: |
-          ZIP_NAME="moodle-local_h5pcarateker-${{ env.PLUGIN_VERSION }}.zip"
+          # Create a new directory for the plugin
+          mkdir local_h5pcaretaker
+          
+          # Copy necessary files into the new directory
+          cp -r ./* local_h5pcaretaker/ \
+            && rm -rf local_h5pcaretaker/.github \
+            && rm -rf local_h5pcaretaker/.git \
+            && rm -rf local_h5pcaretaker/docs \
+            && rm -f local_h5pcaretaker/composer.json \
+            && rm -f local_h5pcaretaker/composer.lock \
+            && rm -f local_h5pcaretaker/package.json \
+            && rm -f local_h5pcaretaker/package-lock.json \
+            && rm -f local_h5pcaretaker/.gitignore
+
+          # Create the ZIP file
+          ZIP_NAME="moodle-local_h5pcaretaker-${{ env.PLUGIN_VERSION }}.zip"
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
-          zip -r "$ZIP_NAME" . \
-            -x ".github/*" ".gitignore" ".git/*" \
-            "docs/*" \
-            "composer.json" "composer.lock" \
-            "package.json" "package-lock.json"
+          zip -r "$ZIP_NAME" local_h5pcaretaker
 
       - name: Upload ZIP to Release
         uses: softprops/action-gh-release@v2
