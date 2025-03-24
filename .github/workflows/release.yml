@@ -25,20 +25,22 @@ jobs:
 
       - name: Create versioned ZIP file
         run: |
-          # Create a new directory for the plugin
-          mkdir local_h5pcaretaker
-          
-          # Copy necessary files into the new directory
-          cp -r ./* local_h5pcaretaker/ \
-            && rm -rf local_h5pcaretaker/.github \
-            && rm -rf local_h5pcaretaker/.git \
-            && rm -rf local_h5pcaretaker/docs \
-            && rm -f local_h5pcaretaker/composer.json \
-            && rm -f local_h5pcaretaker/composer.lock \
-            && rm -f local_h5pcaretaker/package.json \
-            && rm -f local_h5pcaretaker/package-lock.json \
-            && rm -f local_h5pcaretaker/.gitignore
+          # Create a new directory for the plugin in the parent directory
+          mkdir ../local_h5pcaretaker
 
+          # Copy necessary files into the new directory
+          cp -r ./* ../local_h5pcaretaker/ \
+            && rm -rf ../local_h5pcaretaker/.github \
+            && rm -rf ../local_h5pcaretaker/.git \
+            && rm -rf ../local_h5pcaretaker/docs \
+            && rm -f ../local_h5pcaretaker/composer.json \
+            && rm -f ../local_h5pcaretaker/composer.lock \
+            && rm -f ../local_h5pcaretaker/package.json \
+            && rm -f ../local_h5pcaretaker/package-lock.json \
+            && rm -f ../local_h5pcaretaker/.gitignore
+
+          # Change to the parent directory to create the ZIP file
+          cd ..
           # Create the ZIP file
           ZIP_NAME="moodle-local_h5pcaretaker-${{ env.PLUGIN_VERSION }}.zip"
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
