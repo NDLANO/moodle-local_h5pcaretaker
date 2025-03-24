@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace local_h5pcaretaker\local\hooks\output;
-use action_link, context_system, moodle_url, navigation_node;
+
+use action_link, context_system, core_plugin_manager, moodle_url, navigation_node;
 
 /**
  * Hook for before http headers.
@@ -42,7 +43,10 @@ class before_http_headers {
         global $PAGE;
 
         $context = context_system::instance();
-        if (!has_capability('local/h5pcaretaker:use', $context)) {
+        $pluginmanager = core_plugin_manager::instance();
+        $plugininfo = $pluginmanager->get_plugin_info('local_h5pcaretaker');
+
+        if (!$plugininfo->is_installed_and_upgraded() || !has_capability('local/h5pcaretaker:use', $context)) {
             return;
         }
 
