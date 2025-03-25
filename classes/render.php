@@ -115,6 +115,6 @@ class render {
             ];
         }, $availablelocales);
 
-        return $OUTPUT->render_from_template('local_h5pcaretaker/select_language', ['locales' => $locales]);
+        return $OUTPUT->render_from_template('local_h5pcaretaker/select_language', ['locales' => array_values($locales)]);
     }
 }
