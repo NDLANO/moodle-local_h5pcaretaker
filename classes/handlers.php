@@ -130,8 +130,20 @@ class handlers {
      * @return string The filename that matches the pattern.
      */
     private static function get_file_by_pattern($dir, $pattern) {
-        $files = glob($dir . DIRECTORY_SEPARATOR . $pattern);
-        return basename($files[0] ?? '');
+        $files = glob( $dir . DIRECTORY_SEPARATOR . $pattern );
+
+        if ( empty( $files ) ) {
+            return '';
+        }
+
+        $versioned_files = array();
+        foreach ( $files as $file ) {
+            $filename = basename( $file );
+            if ( preg_match( '/(\d+\.\d+\.\d+)/', $filename, $matches ) ) {
+                    $version                      = $matches[1];
+                    $versioned_files[ $filename ] = $version;
+            }
+        }
     }
 
     /**
