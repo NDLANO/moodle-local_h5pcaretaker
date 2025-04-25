@@ -144,6 +144,10 @@ class handlers {
                     $versioned_files[ $filename ] = $version;
             }
         }
+
+        arsort( $versioned_files, SORT_NATURAL );
+
+    	return ! empty( $versioned_files ) ? key( $versioned_files ) : basename( $files[0] ?? '' );
     }
 
     /**
