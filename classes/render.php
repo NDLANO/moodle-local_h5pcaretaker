@@ -79,12 +79,15 @@ class render {
             'download' => get_string('results:download', 'local_h5pcaretaker'),
             'showDetails' => get_string('results:showDetails', 'local_h5pcaretaker'),
             'hideDetails' => get_string('results:hideDetails', 'local_h5pcaretaker'),
-            'expandAllMessages' => get_string('expand:expandAllMessages', 'local_h5pcaretaker'),
-            'collapseAllMessages' => get_string('expand:collapseAllMessages', 'local_h5pcaretaker'),
             'reportTitleTemplate' => get_string('report:titleTemplate', 'local_h5pcaretaker'),
             'h5pcaretaker' => get_string('h5pcaretaker', 'local_h5pcaretaker'),
             'unknownError' => get_string('error:unknownError', 'local_h5pcaretaker'),
-            'checkServerLog' => get_string('error:checkServerLog', 'local_h5pcaretaker')
+            'checkServerLog' => get_string('error:checkServerLog', 'local_h5pcaretaker'),
+            'expandList' => get_string('filter:expandList', 'local_h5pcaretaker'),
+            'collapseList' => get_string('filter:collapseList', 'local_h5pcaretaker'),
+            'changeSortingGrouping' => get_string('results:changeSortingGrouping', 'local_h5pcaretaker'),
+            'previousMessage' => get_string('results:previousMessage', 'local_h5pcaretaker'),
+            'nextMessage' => get_string('results:nextMessage', 'local_h5pcaretaker'),
         ];
 
         echo $OUTPUT->render_from_template('local_h5pcaretaker/h5pcaretaker', $data);
