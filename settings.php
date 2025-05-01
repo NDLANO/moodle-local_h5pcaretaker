@@ -66,4 +66,12 @@ $settings->add(new admin_setting_confightmleditor(
   PARAM_RAW
 ));
 
+// Checkbox for deactivating the branding.
+$settings->add(new admin_setting_configcheckbox(
+  'local_h5pcaretaker/no_branding',
+  get_string('moodle:no_branding', 'local_h5pcaretaker'),
+  get_string('moodle:no_branding_desc', 'local_h5pcaretaker'),
+  0
+));
+
 $ADMIN->add('localplugins', $settings);

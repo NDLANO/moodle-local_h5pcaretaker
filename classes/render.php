@@ -50,6 +50,7 @@ class render {
             'exportremoveid' => $exportremoveid,
             'intro' => get_config('local_h5pcaretaker', 'extratext_intro'),
             'footer' => get_config('local_h5pcaretaker', 'extratext_footer'),
+            'noBranding'=> get_config('local_h5pcaretaker', 'no_branding'),
             'endpoint' => $CFG->wwwroot . '/local/h5pcaretaker/index.php',
             'sessionKeyName' => 'sesskey',
             'sessionKeyValue' => sesskey(),
