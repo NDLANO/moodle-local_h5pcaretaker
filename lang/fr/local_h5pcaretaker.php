@@ -61,7 +61,6 @@ $string['moodle:no_branding'] = 'Désactiver la marque';
 $string['moodle:no_branding_desc'] = 'Désactiver la marque NDLA.';
 $string['moodle:public'] = 'Publique';
 $string['pluginname'] = 'NDLA\'s H5P Caretaker';
-$string['report:titleTemplate'] = 'Rapport H5P-Caretaker pour @title';
 $string['results:changeSortingGrouping'] = 'Modifier le tri/regroupement';
 $string['results:download'] = 'Télécharger';
 $string['results:filterBy'] = 'Filtrer par';

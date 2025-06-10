@@ -80,7 +80,6 @@ class render {
             'download' => get_string('results:download', 'local_h5pcaretaker'),
             'showDetails' => get_string('results:showDetails', 'local_h5pcaretaker'),
             'hideDetails' => get_string('results:hideDetails', 'local_h5pcaretaker'),
-            'reportTitleTemplate' => get_string('report:titleTemplate', 'local_h5pcaretaker'),
             'h5pcaretaker' => get_string('h5pcaretaker', 'local_h5pcaretaker'),
             'unknownError' => get_string('error:unknownError', 'local_h5pcaretaker'),
             'checkServerLog' => get_string('error:checkServerLog', 'local_h5pcaretaker'),

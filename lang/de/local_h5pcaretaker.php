@@ -60,7 +60,6 @@ $string['moodle:no_branding'] = 'Branding deaktivieren';
 $string['moodle:no_branding_desc'] = 'Deaktiviere das NDLA-Branding.';
 $string['moodle:public'] = 'Öffentlich';
 $string['pluginname'] = 'NDLAs H5P Caretaker';
-$string['report:titleTemplate'] = 'H5P-Caretaker-Report für @title';
 $string['results:changeSortingGrouping'] = 'Ändere Sortierung/Gruppierung';
 $string['results:download'] = 'Download';
 $string['results:filterBy'] = 'Filtern nach';
