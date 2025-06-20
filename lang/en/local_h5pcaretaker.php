@@ -63,6 +63,7 @@ $string['moodle:public'] = 'Public';
 $string['pluginname'] = 'NDLA\'s H5P Caretaker';
 $string['results:changeSortingGrouping'] = 'Change sorting/grouping';
 $string['results:download'] = 'Download';
+$string['results:downloadEditedH5P'] = 'Download edited H5P';
 $string['results:filterBy'] = 'Filter by';
 $string['results:groupBy'] = 'Group by';
 $string['results:hideDetails'] = 'Hide details';
