@@ -78,6 +78,7 @@ class render {
             'filterBy' => get_string('results:filterBy', 'local_h5pcaretaker'),
             'groupBy' => get_string('results:groupBy', 'local_h5pcaretaker'),
             'download' => get_string('results:download', 'local_h5pcaretaker'),
+            'downloadEditedH5P' => get_string('results:downloadEditedH5P', 'local_h5pcaretaker'),
             'showDetails' => get_string('results:showDetails', 'local_h5pcaretaker'),
             'hideDetails' => get_string('results:hideDetails', 'local_h5pcaretaker'),
             'h5pcaretaker' => get_string('h5pcaretaker', 'local_h5pcaretaker'),
