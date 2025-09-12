@@ -112,13 +112,31 @@ class handlers {
         }
 
         $h5pcaretaker = new H5PCaretaker($config);
-        $analysis = $h5pcaretaker->analyze(['file' => $file['tmp_name']]);
 
-        if (isset($analysis['error'])) {
-            self::done(constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, $analysis['error']);
+        $changes = isset($_POST['changes']) ? stripslashes($_POST['changes']) : null;
+        if ($changes) {
+            $changesJson = json_decode($changes, false);
+
+            $file = $h5p_caretaker->write(
+                array(
+                    'file' => $file['tmp_name'],
+                    'changes' => $changesJson
+                )
+            );
+
+            if (!isset($file) || isset($file['error'])) {
+                self::done(constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, $file['error']);
+            }
+            self::done(constants::HTTP_STATUS_OK, $file['result']);
+        } else {
+            $analysis = $h5pcaretaker->analyze(['file' => $file['tmp_name']]);
+
+            if (isset($analysis['error'])) {
+                self::done(constants::HTTP_STATUS_UNPROCESSABLE_ENTITY, $analysis['error']);
+            }
+
+            self::done(constants::HTTP_STATUS_OK, $analysis['result']);
         }
-
-        self::done(constants::HTTP_STATUS_OK, $analysis['result']);
     }
 
     /**
