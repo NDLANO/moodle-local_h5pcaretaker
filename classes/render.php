@@ -65,6 +65,7 @@ class render {
             'uploadYourH5Pfile' => get_string('dropzone:uploadH5PFile', 'local_h5pcaretaker'),
             'yourFileIsBeingChecked' => get_string('dropzone:fileBeingChecked', 'local_h5pcaretaker'),
             'yourFileWasCheckedSuccessfully' => get_string('dropzone:fileCheckedSuccessfully', 'local_h5pcaretaker'),
+            'instructions' => get_string('dropzone:instructions', 'local_h5pcaretaker'),
             'allFilteredOut' => get_string('filter:allFilteredOut', 'local_h5pcaretaker'),
             'contentFilter' => get_string('filter:contentFilter', 'local_h5pcaretaker'),
             'showAll' => get_string('filter:showAll', 'local_h5pcaretaker'),
